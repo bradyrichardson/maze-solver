@@ -1,4 +1,3 @@
-from .moves import Moves
 import random
 
 
@@ -12,21 +11,27 @@ class Maze:
         self.possibleYMoves = []
         self.possibleXMoves = []
 
-    def findStart(self):
+    def findStart(self):  # finds the starting point
         for i, col in enumerate(self.foundation[0]):
             if col == 1:
-                return i
+                self.start = [i, 0]
+        for i, col in enumerate(self.foundation):
+            if self.foundation[i][0] == 1:
+                self.start = [0, i]
 
-    def findEnd(self):
+    def findEnd(self):  # finds an int that represents the end point FIXME make so it also checks the last column
         for i, col in enumerate(self.foundation[len(self.foundation) - 1]):
             if col == 1:
-                return i
+                self.end = [i, len(self.foundation) - 1]
+        for i, col in enumerate(self.foundation):
+            if self.foundation[i][len(self.foundation[i]) - 1] == 1:
+                self.end = [len(self.foundation[i]) - 1, i] # fix this to make the end right, otherwise errors get thrown]
 
     def printMaze(self):
         for row in self.foundation:
             print(row)
 
-    # could make this algorithm faster if I just searched adjacent spaces
+    # FIXME could make this algorithm faster if I just searched adjacent spaces
     def findPath(self, currentY, currentX, moveObj):
 
         self.idPossibleMoves(currentY, currentX, moveObj)
@@ -34,15 +39,12 @@ class Maze:
         if len(moveObj.possibleMoves) > 1:  # if there is more than one possible move, the current position is a node
             self.nodeList.append(self.currentPos)
 
-        # print('Possible moves: ', moveObj.possibleMoves) #make a move
-        return self.makeMove(moveObj, currentY, currentX)
+        return self.makeMove(moveObj, currentY, currentX)  # make a move based on the list of possible moves
 
-    # going to make random decision
     def makeMove(self, moveObj, currentY, currentX):
         newPos = []
 
-        # insert some sort of node function that checks the last node and then goes back if needed
-        if len(moveObj.possibleMoves) == 0 and self.currentPos != self.end: # check if dead end has been reached
+        if len(moveObj.possibleMoves) == 0 and self.currentPos != self.end:  # check if dead end has been reached
             newPos = moveObj.goToNode(self, currentY, currentX)
             return newPos
 
@@ -51,11 +53,8 @@ class Maze:
             moveObj.possibleMoves.clear()
             return newPos
 
-
-# still need to add function that counts num moves possible, so that you can go 2+ nodes back if needed
-
     def idPossibleMoves(self, currentY, currentX, moveObj):
-        # clear the arrays that store possible single-coordinate moves
+        # clear the arrays that store possible moves
         if len(moveObj.possibleMoves) > 0:
             moveObj.possibleMoves.clear()
         if len(self.possibleYMoves) > 0:
@@ -66,7 +65,7 @@ class Maze:
         # iterate through upper array (unless on top)
         if currentY != 0:
             for i, canMove in enumerate(self.foundation[currentY - 1]):
-                if canMove == 1 and abs(currentX - i) == 0 and [currentX, currentY]:
+                if canMove == 1 and abs(currentX - i) == 0:
                     self.possibleYMoves.append(currentY - 1)
                     self.possibleXMoves.append(i)
 

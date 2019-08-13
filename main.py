@@ -6,23 +6,25 @@ maze = Maze(start=-1, end=-1, nodeList=[], foundation=[], currentPos=[], possibl
 
 maze.foundation = [  # hard-code the maze object's foundation array, walls are denoted by 0s and paths are denoted by 1s
     [0, 0, 1, 0, 0, 0, 0, 0, 0],
-    [0, 0, 1, 0, 0, 1, 1, 1, 0],
+    [0, 0, 1, 0, 1, 1, 1, 1, 0],
     [0, 1, 1, 0, 0, 1, 0, 1, 0],
     [0, 0, 1, 1, 1, 1, 1, 1, 0],
-    [0, 1, 1, 0, 1, 0, 0, 1, 0],
+    [0, 1, 1, 0, 1, 0, 0, 1, 0],  # it is assumed that the top array and the bottom array hold the start and end, respectively, this can be changed
     [0, 0, 1, 0, 1, 0, 0, 1, 0],
-    [0, 0, 0, 0, 0, 1, 1, 1, 0],
-    [0, 1, 1, 1, 1, 1, 0, 0, 0],
-    [0, 0, 0, 1, 0, 0, 0, 0, 0]
+    [0, 0, 0, 0, 1, 1, 1, 1, 0],
+    [0, 1, 1, 1, 1, 0, 0, 1, 0],
+    [0, 0, 0, 0, 1, 0, 0, 0, 0],
 ]
-maze.start = maze.findStart()
-maze.end = [maze.findEnd(), len(maze.foundation) - 1]
-maze.currentPos = [maze.findStart(), 0]
 
+maze.findStart()
+print(maze.start)
+maze.findEnd()
+print(maze.end)
+maze.currentPos = maze.start
 maze.printMaze()
 
-currentYPos = 0  # start at top array
-currentXPos = maze.start
+currentXPos = maze.start[0]
+currentYPos = maze.start[1]
 
 moves = Moves(visitedPaths=[], possibleMoves=[])
 
@@ -31,14 +33,15 @@ moves.visitedNodes = []
 
 while maze.currentPos != maze.end:
     print('Current Position: ', maze.currentPos)
-    moves.visitedPaths.append(maze.currentPos)
-    maze.currentPos = maze.findPath(currentYPos, currentXPos, moves)
 
+    moves.visitedPaths.append(maze.currentPos)  # append position to the visitedPaths array to prevent moving backwards
 
+    maze.currentPos = maze.findPath(currentYPos, currentXPos, moves)  # find the next move
 
-    if maze.currentPos == maze.end:
+    if maze.currentPos == maze.end:  # when you have reached the end, print the position and celebrate
         print('Current Position: ', maze.currentPos)
         print('Maze solved!')
-    currentXPos = maze.currentPos[0]
+
+    currentXPos = maze.currentPos[0]  # assign passed-in x and y values after a new current position is found
     currentYPos = maze.currentPos[1]
 

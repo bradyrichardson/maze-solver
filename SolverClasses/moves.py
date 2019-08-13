@@ -11,18 +11,24 @@ class Moves:
 
     def goToNode(self, mazeObj, currentY, currentX):
         print('Returning to previous node...')
+
         mazeObj.currentPos = mazeObj.nodeList[len(mazeObj.nodeList) - 1]
+
         newPos = []
+
         newPos = mazeObj.currentPos
+
         currentX = mazeObj.currentPos[0]
         currentY = mazeObj.currentPos[1]
-        mazeObj.idPossibleMoves(currentY, currentX, self)
 
-        if len(self.possibleMoves) == 0:
-            # pop back node
+        mazeObj.idPossibleMoves(currentY, currentX, self)  # find possible moves at the revisited node
+
+        if len(self.possibleMoves) == 0:  # if no moves are available at that previous node, recursively move to the next previous node
             mazeObj.nodeList.pop(len(mazeObj.nodeList) - 1)
+
             self.goToNode(mazeObj, currentY, currentX)
-            if len(self.possibleMoves) > 0:
+
+            if len(self.possibleMoves) > 0:  # recursive return will come back here
                 return mazeObj.currentPos
         else:
             return newPos
