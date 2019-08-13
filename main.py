@@ -11,15 +11,12 @@ maze.foundation = [  # hard-code the maze object's foundation array, walls are d
     [0, 0, 1, 1, 1, 1, 1, 1, 0],
     [0, 1, 1, 0, 1, 0, 0, 1, 0],  # it is assumed that the top array and the bottom array hold the start and end, respectively, this can be changed
     [0, 0, 1, 0, 1, 0, 0, 1, 0],
-    [0, 0, 0, 0, 1, 1, 1, 1, 0],
-    [0, 1, 1, 1, 1, 0, 0, 1, 0],
-    [0, 0, 0, 0, 1, 0, 0, 0, 0],
+    [0, 0, 0, 1, 1, 1, 1, 1, 0],
+    [0, 1, 1, 1, 0, 0, 0, 1, 0],
+    [0, 0, 0, 0, 0, 0, 0, 1, 0],
 ]
-
 maze.findStart()
-print(maze.start)
 maze.findEnd()
-print(maze.end)
 maze.currentPos = maze.start
 maze.printMaze()
 
@@ -28,7 +25,7 @@ currentYPos = maze.start[1]
 
 moves = Moves(visitedPaths=[], possibleMoves=[])
 
-moves.visitedPaths = []  # implement visited array and nodes to speed up process
+moves.visitedPaths = []
 moves.visitedNodes = []
 
 while maze.currentPos != maze.end:
