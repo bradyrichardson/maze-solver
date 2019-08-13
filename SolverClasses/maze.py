@@ -1,6 +1,7 @@
 from .moves import Moves
 import random
 
+
 class Maze:
     def __init__(self, start, end, nodeList, foundation, currentPos, possibleYMoves, possibleXMoves):
         self.start = []
@@ -27,7 +28,34 @@ class Maze:
 
     # could make this algorithm faster if I just searched adjacent spaces
     def findPath(self, currentY, currentX, moveObj):
-        # clear the arrays that store possible moves
+
+        self.idPossibleMoves(currentY, currentX, moveObj)
+
+        if len(moveObj.possibleMoves) > 1:  # if there is more than one possible move, the current position is a node
+            self.nodeList.append(self.currentPos)
+
+        # print('Possible moves: ', moveObj.possibleMoves) #make a move
+        return self.makeMove(moveObj, currentY, currentX)
+
+    # going to make random decision
+    def makeMove(self, moveObj, currentY, currentX):
+        newPos = []
+
+        # insert some sort of node function that checks the last node and then goes back if needed
+        if len(moveObj.possibleMoves) == 0 and self.currentPos != self.end: # check if dead end has been reached
+            newPos = moveObj.goToNode(self, currentY, currentX)
+            return newPos
+
+        if len(moveObj.possibleMoves) != 0:
+            newPos = moveObj.possibleMoves[random.randint(0, len(moveObj.possibleMoves) - 1)]
+            moveObj.possibleMoves.clear()
+            return newPos
+
+
+# still need to add function that counts num moves possible, so that you can go 2+ nodes back if needed
+
+    def idPossibleMoves(self, currentY, currentX, moveObj):
+        # clear the arrays that store possible single-coordinate moves
         if len(moveObj.possibleMoves) > 0:
             moveObj.possibleMoves.clear()
         if len(self.possibleYMoves) > 0:
@@ -38,7 +66,7 @@ class Maze:
         # iterate through upper array (unless on top)
         if currentY != 0:
             for i, canMove in enumerate(self.foundation[currentY - 1]):
-                if canMove == 1 and abs(currentX - i) == 0:
+                if canMove == 1 and abs(currentX - i) == 0 and [currentX, currentY]:
                     self.possibleYMoves.append(currentY - 1)
                     self.possibleXMoves.append(i)
 
@@ -58,15 +86,5 @@ class Maze:
         # combine possible x and y moves into single array that holds coordinates
         for i in range(len(self.possibleXMoves)):
             addMove = [self.possibleXMoves[i], self.possibleYMoves[i]]
-            moveObj.possibleMoves.append(addMove)
-
-        # potentially parse indices instead of using another array
-        # print('Possible moves: ', moveObj.possibleMoves)
-        return self.makeMove(moveObj)
-
-    # going to make random decision to get to end
-    def makeMove(self, moveObj):
-        newPos = []
-        if len(moveObj.possibleMoves) != 0:
-            newPos = moveObj.possibleMoves[random.randint(0, len(moveObj.possibleMoves) - 1)]
-        return newPos
+            if moveObj.checkIfVisited(addMove) == False:  # check for and remove previous paths as possible moves
+                moveObj.possibleMoves.append(addMove)
