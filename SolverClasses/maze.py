@@ -1,6 +1,5 @@
 import random
 
-
 class Maze:
     def __init__(self, start, end, nodeList, foundation, currentPos, possibleYMoves, possibleXMoves):
         self.start = []
@@ -11,27 +10,40 @@ class Maze:
         self.possibleYMoves = []
         self.possibleXMoves = []
 
-    def findStart(self):  # finds the starting point
+    def findEnds(self):  # finds the starting and ending points
+        # iterate through top array
         for i, col in enumerate(self.foundation[0]):
-            if col == 1:
+            if col == 1 and len(self.start) == 0:
                 self.start = [i, 0]
-        for i, col in enumerate(self.foundation):
-            if self.foundation[i][0] == 1:
-                self.start = [0, i]
+                continue
+            if col == 1 and len(self.start) > 0:
+                self.end = [i, 0]
 
-    def findEnd(self):  # finds an int that represents the end point FIXME make so it also checks the last column
+        # iterate through bottom array
         for i, col in enumerate(self.foundation[len(self.foundation) - 1]):
-            if col == 1:
+            if col == 1 and len(self.start) == 0:
+                self.start = [i, len(self.foundation) - 1]
+                continue
+            if col == 1 and len(self.start) > 0:
                 self.end = [i, len(self.foundation) - 1]
-        for i, col in enumerate(self.foundation):
-            if self.foundation[i][len(self.foundation[i]) - 1] == 1:
-                self.end = [len(self.foundation[i]) - 1, i] # fix this to make the end right, otherwise errors get thrown]
+
+        # iterate through left column
+        for i, rowStart in enumerate(self.foundation):
+            if rowStart[0] == 1 and len(self.start) == 0:
+                self.start = [0, i]
+            if rowStart[0] == 1 and len(self.start) > 0:
+                self.end = [0, i]
+        # iterate through right column
+        for i, rowEnd in enumerate(self.foundation):
+            if rowEnd[len(rowEnd) - 1] == 1 and len(self.start) == 0:
+                self.start = [len(rowEnd) - 1, i]
+            if rowEnd[len(rowEnd) - 1] == 1 and len(self.start) > 0:
+                self.end = [len(rowEnd) - 1, i]
 
     def printMaze(self):
         for row in self.foundation:
             print(row)
 
-    # FIXME could make this algorithm faster if I just searched adjacent spaces
     def findPath(self, currentY, currentX, moveObj):
 
         self.idPossibleMoves(currentY, currentX, moveObj)
@@ -62,28 +74,54 @@ class Maze:
         if len(self.possibleXMoves) > 0:
             self.possibleXMoves.clear()
 
-        # iterate through upper array (unless on top)
-        if currentY != 0:
-            for i, canMove in enumerate(self.foundation[currentY - 1]):
-                if canMove == 1 and abs(currentX - i) == 0:
-                    self.possibleYMoves.append(currentY - 1)
-                    self.possibleXMoves.append(i)
+        # possible upper moves
+        if currentY != 0 and self.foundation[currentY - 1][currentX] == 1:
+            self.possibleXMoves.append(currentX)
+            self.possibleYMoves.append(currentY - 1)
 
-        # iterate through current array
-        for i, canMove in enumerate(self.foundation[currentY]):
-            if canMove == 1 and currentX != i and abs(currentX - i) == 1:
+
+        # possible left moves
+        if currentX != 0:
+            if self.foundation[currentY][currentX - 1] == 1:
+                self.possibleXMoves.append(currentX - 1)
                 self.possibleYMoves.append(currentY)
-                self.possibleXMoves.append(i)
 
-        # iterate through lower array (unless on bottom)
-        if currentY != len(self.foundation) - 1:
-            for i, canMove in enumerate(self.foundation[currentY + 1]):
-                if canMove == 1 and abs(currentX - i) == 0:
-                    self.possibleYMoves.append(currentY + 1)
-                    self.possibleXMoves.append(i)
+        # possible right moves
+        if currentX != len(self.foundation[currentY]) - 1:
+            if self.foundation[currentY][currentX + 1] == 1:
+                self.possibleXMoves.append(currentX + 1)
+                self.possibleYMoves.append(currentY)
+
+        # possible lower moves
+        if currentY != len(self.foundation) - 1 and self.foundation[currentY + 1][currentX] == 1:
+            self.possibleXMoves.append(currentX)
+            self.possibleYMoves.append(currentY + 1)
 
         # combine possible x and y moves into single array that holds coordinates
         for i in range(len(self.possibleXMoves)):
             addMove = [self.possibleXMoves[i], self.possibleYMoves[i]]
             if moveObj.checkIfVisited(addMove) == False:  # check for and remove previous paths as possible moves
                 moveObj.possibleMoves.append(addMove)
+
+            # **BLOCK COMMENTS ARE OLD METHOD**
+
+            # iterate through upper array (unless on top)
+            #if currentY != 0:
+            #    for i, canMove in enumerate(self.foundation[currentY - 1]):
+            #        if canMove == 1 and abs(currentX - i) == 0:
+            #            self.possibleYMoves.append(currentY - 1)
+            #            self.possibleXMoves.append(i)
+
+
+            #for i, canMove in enumerate(self.foundation[currentY]):
+            #    if canMove == 1 and currentX != i and abs(currentX - i) == 1:
+            #        self.possibleYMoves.append(currentY)
+            #        self.possibleXMoves.append(i)
+
+
+            # iterate through lower array (unless on bottom)
+            #if currentY != len(self.foundation) - 1:
+            #    for i, canMove in enumerate(self.foundation[currentY + 1]):
+            #        if canMove == 1 and abs(currentX - i) == 0:
+            #            self.possibleYMoves.append(currentY + 1)
+            #            self.possibleXMoves.append(i)

@@ -1,24 +1,26 @@
 from SolverClasses.maze import Maze
 from SolverClasses.moves import Moves
-import random
+
 
 maze = Maze(start=-1, end=-1, nodeList=[], foundation=[], currentPos=[], possibleYMoves=[], possibleXMoves=[])
 
 maze.foundation = [  # hard-code the maze object's foundation array, walls are denoted by 0s and paths are denoted by 1s
-    [0, 0, 1, 0, 0, 0, 0, 0, 0],
+    [0, 0, 1, 0, 0, 1, 0, 0, 0],
     [0, 0, 1, 0, 1, 1, 1, 1, 0],
     [0, 1, 1, 0, 0, 1, 0, 1, 0],
     [0, 0, 1, 1, 1, 1, 1, 1, 0],
-    [0, 1, 1, 0, 1, 0, 0, 1, 0],  # it is assumed that the top array and the bottom array hold the start and end, respectively, this can be changed
+    [0, 1, 1, 0, 1, 0, 0, 1, 0],
     [0, 0, 1, 0, 1, 0, 0, 1, 0],
     [0, 0, 0, 1, 1, 1, 1, 1, 0],
     [0, 1, 1, 1, 0, 0, 0, 1, 0],
-    [0, 0, 0, 0, 0, 0, 0, 1, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0],
 ]
-maze.findStart()
-maze.findEnd()
+maze.findEnds()
+# maze.findEnd()
 maze.currentPos = maze.start
 maze.printMaze()
+print('s: ', maze.start)
+print('e: ', maze.end)
 
 currentXPos = maze.start[0]
 currentYPos = maze.start[1]
